@@ -1,45 +1,82 @@
-import "./index.css";
 import { Composition } from "remotion";
-import { HelloWorld, myCompSchema } from "./HelloWorld";
-import { Logo, myCompSchema2 } from "./HelloWorld/Logo";
+import { HelloWorld } from "./HelloWorld";
+import { FullScreenSocialProof } from "./FullScreenSocialProof";
 
-// Each <Composition> is an entry in the sidebar!
+// Wrapper components to map API props to component props
+const ProductHeroWrapper: React.FC<any> = (props) => {
+  const { product, imageUrl } = props;
+  
+  return (
+    <HelloWorld
+      productImage={imageUrl || product?.image}
+      productTitle={product?.title || product?.name}
+      productPrice={product?.price}
+      productRating={product?.rating}
+    />
+  );
+};
+
+const FullScreenSocialProofWrapper: React.FC<any> = (props) => {
+  const { product, imageUrl } = props;
+  
+  return (
+    <FullScreenSocialProof
+      productImage={imageUrl || product?.image}
+      productTitle={product?.title || product?.name}
+      originalPrice={product?.originalPrice}
+      salePrice={product?.salePrice || product?.price}
+      rating={product?.rating}
+      reviewCount={product?.reviewCount}
+      reviews={product?.reviews}
+    />
+  );
+};
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      {/* Scene 1: Product Hero */}
       <Composition
-        // You can take the "id" to render a video:
-        // npx remotion render HelloWorld
-        id="HelloWorld"
-        component={HelloWorld}
-        durationInFrames={150}
+        id="ProductHero"
+        component={ProductHeroWrapper}
+        durationInFrames={240}
         fps={30}
         width={1920}
         height={1080}
-        // You can override these props for each render:
-        // https://www.remotion.dev/docs/parametrized-rendering
-        schema={myCompSchema}
         defaultProps={{
-          titleText: "Welcome to Remotion",
-          titleColor: "#000000",
-          logoColor1: "#91EAE4",
-          logoColor2: "#86A8E7",
+          product: {
+            title: "Ultra Lightweight Breathable Walking Shoes",
+            price: "$90.99",
+            rating: 4.8
+          },
+          imageUrl: "https://m.media-amazon.com/images/I/71dp-iVWrLL._AC_SX575_.jpg"
         }}
       />
-
-      {/* Mount any React component to make it show up in the sidebar and work on it individually! */}
+      
+      {/* Scene 2: Full Screen Social Proof */}
       <Composition
-        id="OnlyLogo"
-        component={Logo}
-        durationInFrames={150}
+        id="FullScreenSocialProof"
+        component={FullScreenSocialProofWrapper}
+        durationInFrames={240}
         fps={30}
         width={1920}
         height={1080}
-        schema={myCompSchema2}
         defaultProps={{
-          logoColor1: "#91dAE2" as const,
-          logoColor2: "#86A8E7" as const,
+          product: {
+            title: "Premium Wireless Headphones",
+            originalPrice: "$99.00",
+            salePrice: "$59.00",
+            rating: 4.8,
+            reviewCount: 2341,
+            reviews: [
+              "🔥 BEST PURCHASE THIS YEAR!",
+              "DIDN'T EXPECT THIS QUALITY!",
+              "WORTH EVERY DOLLAR.",
+              "SOUND QUALITY IS UNREAL.",
+              "PERFECT FOR DAILY COMMUTE."
+            ]
+          },
+          imageUrl: "https://m.media-amazon.com/images/I/71bR27GAJBL._AC_SX575_.jpg"
         }}
       />
     </>
