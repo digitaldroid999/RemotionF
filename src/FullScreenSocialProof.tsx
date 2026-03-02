@@ -196,6 +196,29 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
   
   const ctaGlow = 0.6 + 0.4 * Math.sin(frame * 0.12);
 
+  // LANDSCAPE-SPECIFIC ANIMATIONS (wireframe)
+  // Review: bottom → top, long (~2s)
+  const reviewFromBottomProgress = interpolate(
+    frame,
+    [sections.socialProof.start, sections.socialProof.end],
+    [0, 1],
+    { easing: Easing.out(Easing.cubic), extrapolateRight: "clamp" }
+  );
+  // Price: bottom → top, short (~0.5s)
+  const priceFromBottomProgress = interpolate(
+    frame,
+    [sections.priceImpact.start, sections.priceImpact.start + secondsToFrames(0.5)],
+    [0, 1],
+    { easing: Easing.out(Easing.cubic), extrapolateRight: "clamp" }
+  );
+  // CTA: right → left, long (~1.5s)
+  const ctaFromRightProgress = interpolate(
+    frame,
+    [sections.ctaMoment.start, sections.ctaMoment.start + secondsToFrames(1.5)],
+    [0, 1],
+    { easing: Easing.out(Easing.cubic), extrapolateRight: "clamp" }
+  );
+
   // Background animation
   const bgMoveX = Math.sin(frame * 0.01) * 10;
   const bgMoveY = Math.cos(frame * 0.008) * 10;
@@ -380,7 +403,7 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
                 ...styles.discountBadge,
                 transform: `scale(${discountPulse})`
               }}>
-                {Math.round((1 - parseFloat(salePrice.replace('$', '')) / parseFloat(originalPrice.replace('$', ''))) * 100)}% OFF
+                {Math.round((1 - parseFloat((salePrice || '$0').replace('$', '')) / parseFloat((originalPrice || '$0').replace('$', ''))) * 100)}% OFF
               </div>
             </div>
             
@@ -557,28 +580,30 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
           </div>
         </>
       ) : (
-        // LANDSCAPE LAYOUT (1920×1080) - SPLIT VIEW
+        // LANDSCAPE LAYOUT (1920×1080) - WIREFRAME: Title | [Review | Price | Product] row | CTA below price+product
         <>
-          {/* LEFT SIDE: SOCIAL PROOF & REVIEWS */}
+          {/* REVIEW PART: left, ~23% width; content centered in box; animate bottom → top (long) */}
           <div style={{
             position: "absolute" as const,
-            top: "25%",
-            left: "5%",
-            width: "45%",
+            top: "24%",
+            left: "2%",
+            width: "23%",
+            height: "37%",
             display: "flex",
             flexDirection: "column" as const,
-            alignItems: "flex-start",
-            gap: "30px",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "24px",
             opacity: socialProofProgress,
-            transform: `translateX(${(1 - socialProofProgress) * -100}px)`,
+            transform: `translateY(${(1 - reviewFromBottomProgress) * 100}px)`,
             zIndex: 30,
           }}>
-            {/* STAR RATING */}
             <div style={{
               display: "flex",
-              gap: "20px",
-              marginBottom: "15px",
-              transform: `scale(${starsScale})`
+              gap: "16px",
+              marginBottom: "8px",
+              transform: `scale(${starsScale})`,
+              justifyContent: "center"
             }}>
               {Array.from({ length: 5 }).map((_, i) => (
                 <span key={i} style={{
@@ -591,8 +616,6 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
                 </span>
               ))}
             </div>
-            
-            {/* REVIEW COUNT */}
             <div style={{
               fontSize: "clamp(28px, 2.5vw, 36px)",
               fontWeight: 700 as const,
@@ -602,17 +625,14 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
             }}>
               {rating.toFixed(1)} • {reviewCount.toLocaleString()} REVIEWS
             </div>
-            
-            {/* REVIEW CAROUSEL */}
             <div style={{
               width: "100%",
-              maxWidth: "600px",
-              textAlign: "left" as const,
-              marginTop: "20px"
+              textAlign: "center" as const,
+              marginTop: "12px"
             }}>
               <div style={{
                 opacity: reviewOpacity,
-                transform: `translateX(${(1 - reviewOpacity) * 50}px)`
+                transform: `translateX(${(1 - reviewOpacity) * 30}px)`
               }}>
                 <div style={{
                   fontSize: "clamp(32px, 3vw, 44px)",
@@ -620,19 +640,21 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
                   lineHeight: 1.3,
                   color: "#fff",
                   textShadow: "0 4px 20px rgba(0,0,0,0.8)",
-                  paddingRight: "40px",
-                  minHeight: "140px"
+                  paddingLeft: "10px",
+                  paddingRight: "10px",
+                  minHeight: "120px"
                 }}>
                   "{reviews[reviewIndex]}"
                 </div>
               </div>
               <div style={{
                 display: "flex",
-                gap: "15px",
-                marginTop: "25px"
+                gap: "12px",
+                marginTop: "20px",
+                justifyContent: "center"
               }}>
                 {reviews.map((_, idx) => (
-                  <div 
+                  <div
                     key={idx}
                     style={{
                       width: idx === reviewIndex ? 20 : 10,
@@ -646,172 +668,164 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
               </div>
             </div>
           </div>
-          
-          {/* RIGHT SIDE: PRICE & CTA */}
+
+          {/* PRICE PART: center-left, ~27% width; content centered in box; animate bottom → top (short) */}
           <div style={{
             position: "absolute" as const,
-            top: "25%",
-            right: "5%",
-            width: "45%",
+            top: "24%",
+            left: "26%",
+            width: "27%",
+            height: "30%",
             display: "flex",
             flexDirection: "column" as const,
-            alignItems: "flex-end",
-            gap: "40px",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "12px",
             opacity: priceImpactProgress,
-            transform: `translateX(${(1 - priceImpactProgress) * 100}px)`,
+            transform: `translateY(${(1 - priceFromBottomProgress) * 50}px) scale(${priceBounce})`,
             zIndex: 30,
           }}>
-            {/* PRICE SECTION */}
             <div style={{
               display: "flex",
-              flexDirection: "column" as const,
-              alignItems: "flex-end",
-              gap: "15px",
-              transform: `scale(${priceBounce})`
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "20px",
+              marginBottom: "6px"
             }}>
               <div style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "25px",
-                marginBottom: "10px"
-              }}>
-                <div style={{
-                  fontSize: "clamp(32px, 2.5vw, 42px)",
-                  color: "#999",
-                  textDecoration: "line-through",
-                  fontWeight: 600 as const
-                }}>
-                  {originalPrice}
-                </div>
-                <div style={{
-                  background: "linear-gradient(135deg, #ef4444, #dc2626)",
-                  color: "white",
-                  padding: "12px 25px",
-                  borderRadius: "30px",
-                  fontSize: "clamp(20px, 1.8vw, 28px)",
-                  fontWeight: 900 as const,
-                  letterSpacing: "1px",
-                  boxShadow: "0 8px 30px rgba(239, 68, 68, 0.5)",
-                  transform: `scale(${discountPulse})`
-                }}>
-                  {Math.round((1 - parseFloat(salePrice.replace('$', '')) / parseFloat(originalPrice.replace('$', ''))) * 100)}% OFF
-                </div>
-              </div>
-              
-              <div style={{
-                fontSize: "clamp(64px, 6vw, 96px)",
-                fontWeight: 900 as const,
-                color: "#10b981",
-                lineHeight: 1,
-                textShadow: "0 8px 40px rgba(16, 185, 129, 0.6)",
-                margin: "10px 0"
-              }}>
-                {salePrice}
-              </div>
-              
-              <div style={{
-                fontSize: "clamp(20px, 1.8vw, 28px)",
-                color: "#86efac",
-                fontWeight: 600 as const,
-                letterSpacing: "1px",
-                textAlign: "right" as const
-              }}>
-                LIMITED TIME OFFER • FREE SHIPPING
-              </div>
-            </div>
-            
-            {/* CTA SECTION */}
-            <div style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column" as const,
-              alignItems: "flex-end",
-              gap: "25px",
-              opacity: ctaProgress,
-              transform: `translateY(${(1 - ctaProgress) * 50}px)`
-            }}>
-              <div style={{
-                ...styles.ctaButton,
-                background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
-                boxShadow: `
-                  0 0 ${60 * ctaGlow}px rgba(37, 99, 235, 0.6),
-                  0 4px 20px rgba(0, 0, 0, 0.3),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.2)
-                `,
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                position: "relative",
-                overflow: "hidden",
-                maxWidth: "500px",
-                padding: "25px 0",
-                fontSize: "clamp(28px, 2.5vw, 36px)",
-              }}>
-                {/* Glowing background effect */}
-                <div style={{
-                  position: "absolute",
-                  top: "0",
-                  left: "0",
-                  right: "0",
-                  bottom: "0",
-                  background: "radial-gradient(circle at center, rgba(59, 130, 246, 0.1) 0%, transparent 70%)",
-                  opacity: ctaGlow * 0.8
-                }} />
-                
-                {/* Animated shine effect */}
-                <div style={{
-                  position: "absolute",
-                  top: "-50%",
-                  left: "-50%",
-                  width: "200%",
-                  height: "200%",
-                  background: "linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%)",
-                  transform: `translateX(${Math.sin(frame * 0.05) * 100}%)`,
-                  opacity: 0.3
-                }} />
-                
-                <span style={{
-                  ...styles.ctaIcon,
-                  background: "linear-gradient(135deg, #FFD700, #FFEC8B)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  filter: "drop-shadow(0 0 10px rgba(255, 215, 0, 0.5))",
-                  fontSize: "clamp(36px, 4vw, 48px)"
-                }}>⚡</span>
-                
-                <span style={{
-                  ...styles.ctaText,
-                  background: "linear-gradient(135deg, #ffffff, #e5e7eb)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  letterSpacing: "2px",
-                  fontWeight: 800,
-                  textShadow: "0 2px 10px rgba(255, 255, 255, 0.2)"
-                }}>SHOP NOW</span>
-                
-                <span style={{
-                  ...styles.ctaArrow,
-                  background: "linear-gradient(135deg, #FFD700, #FFEC8B)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  marginLeft: "15px",
-                  filter: "drop-shadow(0 0 8px rgba(255, 215, 0, 0.5))",
-                  transform: `translateX(${Math.sin(frame * 0.1) * 5}px)`,
-                  fontSize: "clamp(32px, 3.5vw, 42px)"
-                }}>➜</span>
-              </div>
-              
-              <div style={{
-                display: "flex",
-                flexDirection: "column" as const,
-                alignItems: "flex-end",
-                gap: "15px",
-                fontSize: "clamp(16px, 1.5vw, 20px)",
-                color: "#cbd5e1",
+                fontSize: "clamp(28px, 2.5vw, 38px)",
+                color: "#999",
+                textDecoration: "line-through",
                 fontWeight: 600 as const
               }}>
-                <div style={styles.trustItem}>✅ 30-DAY GUARANTEE</div>
-                <div style={styles.trustItem}>🚚 FREE EXPRESS SHIPPING</div>
-                <div style={styles.trustItem}>🔒 SECURE CHECKOUT</div>
+                {originalPrice}
               </div>
+              <div style={{
+                background: "linear-gradient(135deg, #ef4444, #dc2626)",
+                color: "white",
+                padding: "10px 20px",
+                borderRadius: "30px",
+                fontSize: "clamp(18px, 1.8vw, 26px)",
+                fontWeight: 900 as const,
+                letterSpacing: "1px",
+                boxShadow: "0 8px 30px rgba(239, 68, 68, 0.5)",
+                transform: `scale(${discountPulse})`
+              }}>
+                {Math.round((1 - parseFloat((salePrice || '$0').replace('$', '')) / parseFloat((originalPrice || '$0').replace('$', ''))) * 100)}% OFF
+              </div>
+            </div>
+            <div style={{
+              fontSize: "clamp(48px, 5vw, 72px)",
+              fontWeight: 900 as const,
+              color: "#10b981",
+              lineHeight: 1,
+              textShadow: "0 8px 40px rgba(16, 185, 129, 0.6)",
+              margin: "4px 0"
+            }}>
+              {salePrice}
+            </div>
+            <div style={{
+              fontSize: "clamp(18px, 1.6vw, 24px)",
+              color: "#86efac",
+              fontWeight: 600 as const,
+              letterSpacing: "1px",
+              textAlign: "center" as const
+            }}>
+              LIMITED TIME OFFER • FREE SHIPPING
+            </div>
+          </div>
+
+          {/* CTA PART: below price + product, spans from price left to product right; animate right → left (long) */}
+          <div style={{
+            position: "absolute" as const,
+            left: "26%",
+            right: "3%",
+            bottom: "12%",
+            display: "flex",
+            flexDirection: "column" as const,
+            alignItems: "center",
+            gap: "16px",
+            opacity: ctaProgress,
+            transform: `translateX(${(1 - ctaFromRightProgress) * 180}px)`,
+            zIndex: 30,
+          }}>
+            <div style={{
+              ...styles.ctaButton,
+              background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+              boxShadow: `
+                0 0 ${60 * ctaGlow}px rgba(37, 99, 235, 0.6),
+                0 4px 20px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2)
+              `,
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              position: "relative",
+              overflow: "hidden",
+              width: "100%",
+              maxWidth: "100%",
+              padding: "22px 0",
+              fontSize: "clamp(28px, 2.5vw, 36px)",
+            }}>
+              <div style={{
+                position: "absolute",
+                top: "0",
+                left: "0",
+                right: "0",
+                bottom: "0",
+                background: "radial-gradient(circle at center, rgba(59, 130, 246, 0.1) 0%, transparent 70%)",
+                opacity: ctaGlow * 0.8
+              }} />
+              <div style={{
+                position: "absolute",
+                top: "-50%",
+                left: "-50%",
+                width: "200%",
+                height: "200%",
+                background: "linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%)",
+                transform: `translateX(${Math.sin(frame * 0.05) * 100}%)`,
+                opacity: 0.3
+              }} />
+              <span style={{
+                ...styles.ctaIcon,
+                background: "linear-gradient(135deg, #FFD700, #FFEC8B)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                filter: "drop-shadow(0 0 10px rgba(255, 215, 0, 0.5))",
+                fontSize: "clamp(36px, 4vw, 48px)"
+              }}>⚡</span>
+              <span style={{
+                ...styles.ctaText,
+                background: "linear-gradient(135deg, #ffffff, #e5e7eb)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                letterSpacing: "2px",
+                fontWeight: 800,
+                textShadow: "0 2px 10px rgba(255, 255, 255, 0.2)"
+              }}>SHOP NOW</span>
+              <span style={{
+                ...styles.ctaArrow,
+                background: "linear-gradient(135deg, #FFD700, #FFEC8B)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                marginLeft: "15px",
+                filter: "drop-shadow(0 0 8px rgba(255, 215, 0, 0.5))",
+                transform: `translateX(${Math.sin(frame * 0.1) * 5}px)`,
+                fontSize: "clamp(32px, 3.5vw, 42px)"
+              }}>➜</span>
+            </div>
+            <div style={{
+              display: "flex",
+              flexDirection: "row" as const,
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "24px",
+              flexWrap: "wrap" as const,
+              fontSize: "clamp(16px, 1.5vw, 20px)",
+              color: "#cbd5e1",
+              fontWeight: 600 as const
+            }}>
+              <div style={styles.trustItem}>✅ 30-DAY GUARANTEE</div>
+              <div style={styles.trustItem}>🚚 FREE EXPRESS SHIPPING</div>
+              <div style={styles.trustItem}>🔒 SECURE CHECKOUT</div>
             </div>
           </div>
         </>
