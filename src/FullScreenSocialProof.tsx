@@ -425,6 +425,7 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
           }}>
             <div style={{
               ...styles.ctaButton,
+              fontSize: "40px",
               background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
               boxShadow: `
                 0 0 ${80 * ctaGlow}px rgba(37, 99, 235, 0.6),
@@ -460,6 +461,7 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
               
               <span style={{
                 ...styles.ctaIcon,
+                fontSize: "48px",
                 background: "linear-gradient(135deg, #FFD700, #FFEC8B)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
@@ -468,6 +470,7 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
               
               <span style={{
                 ...styles.ctaText,
+                fontSize: "40px",
                 background: "linear-gradient(135deg, #ffffff, #e5e7eb)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
@@ -478,6 +481,7 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
               
               <span style={{
                 ...styles.ctaArrow,
+                fontSize: "44px",
                 background: "linear-gradient(135deg, #FFD700, #FFEC8B)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
@@ -763,7 +767,7 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
               width: "100%",
               maxWidth: "100%",
               padding: "22px 0",
-              fontSize: "clamp(28px, 2.5vw, 36px)",
+              fontSize: "32px",
             }}>
               <div style={{
                 position: "absolute",
@@ -790,7 +794,7 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 filter: "drop-shadow(0 0 10px rgba(255, 215, 0, 0.5))",
-                fontSize: "clamp(36px, 4vw, 48px)"
+                fontSize: "42px"
               }}>⚡</span>
               <span style={{
                 ...styles.ctaText,
@@ -799,7 +803,8 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
                 WebkitTextFillColor: "transparent",
                 letterSpacing: "2px",
                 fontWeight: 800,
-                textShadow: "0 2px 10px rgba(255, 255, 255, 0.2)"
+                textShadow: "0 2px 10px rgba(255, 255, 255, 0.2)",
+                fontSize: "32px"
               }}>SHOP NOW</span>
               <span style={{
                 ...styles.ctaArrow,
@@ -809,7 +814,7 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
                 marginLeft: "15px",
                 filter: "drop-shadow(0 0 8px rgba(255, 215, 0, 0.5))",
                 transform: `translateX(${Math.sin(frame * 0.1) * 5}px)`,
-                fontSize: "clamp(32px, 3.5vw, 42px)"
+                fontSize: "38px"
               }}>➜</span>
             </div>
             <div style={{
@@ -819,7 +824,7 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
               justifyContent: "center",
               gap: "24px",
               flexWrap: "wrap" as const,
-              fontSize: "clamp(16px, 1.5vw, 20px)",
+              fontSize: "18px",
               color: "#cbd5e1",
               fontWeight: 600 as const
             }}>
