@@ -304,12 +304,14 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
         )}
       </div>
       
-      {/* TITLE - RESPONSIVE FONT SIZE */}
+      {/* TITLE - in landscape kept left of product image so nothing overlaps it */}
       <div style={{
         position: "absolute",
         top: `${titlePosition}%`,
-        left: 0,
-        right: 0,
+        ...(isLandscape
+          ? { left: 0, right: "38%", display: "flex" as const, justifyContent: "center", alignItems: "center" }
+          : { left: 0, right: 0 }
+        ),
         textAlign: "center" as const,
         fontSize: titleFontSize,
         fontWeight: 900 as const,
@@ -673,13 +675,12 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
             </div>
           </div>
 
-          {/* PRICE PART: center-left, ~27% width; content centered in box; animate bottom → top (short) */}
+          {/* PRICE PART: above CTA, left of product image (no overlap); animate bottom → top (short) */}
           <div style={{
             position: "absolute" as const,
-            top: "24%",
             left: "26%",
-            width: "27%",
-            height: "30%",
+            right: "38%",
+            bottom: "32%",
             display: "flex",
             flexDirection: "column" as const,
             alignItems: "center",
