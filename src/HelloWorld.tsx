@@ -164,19 +164,6 @@ export const HelloWorld: React.FC<AmazonProductVideoProps> = ({
         alignItems: "center",
         gap: "10px"
       }}>
-        <div style={{
-          width: 40,
-          height: 40,
-          background: "#3b82f6",
-          borderRadius: 10,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontWeight: "bold"
-        }}>
-          A
-        </div>
-        Amazon Premium
       </div>
     </AbsoluteFill>
   );

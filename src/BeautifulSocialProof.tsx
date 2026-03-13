@@ -424,7 +424,7 @@ const styles = {
   } as React.CSSProperties,
   
   trustIcon: {
-    fontSize: 20
+    fontSize: 22
   } as React.CSSProperties,
   
   title: {
@@ -725,9 +725,5 @@ const styles = {
     fontSize: 18,
     color: "#cbd5e1",
     fontWeight: 500 as const
-  } as React.CSSProperties,
-  
-  trustIcon: {
-    fontSize: 22
   } as React.CSSProperties
 };
