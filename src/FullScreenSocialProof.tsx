@@ -697,27 +697,6 @@ export const FullScreenSocialProof: React.FC<FullScreenSocialProofProps> = ({
               gap: "20px",
               marginBottom: "6px"
             }}>
-              <div style={{
-                fontSize: "clamp(28px, 2.5vw, 38px)",
-                color: "#999",
-                textDecoration: "line-through",
-                fontWeight: 600 as const
-              }}>
-                {originalPrice}
-              </div>
-              <div style={{
-                background: "linear-gradient(135deg, #ef4444, #dc2626)",
-                color: "white",
-                padding: "10px 20px",
-                borderRadius: "30px",
-                fontSize: "clamp(18px, 1.8vw, 26px)",
-                fontWeight: 900 as const,
-                letterSpacing: "1px",
-                boxShadow: "0 8px 30px rgba(239, 68, 68, 0.5)",
-                transform: `scale(${discountPulse})`
-              }}>
-                {Math.round((1 - parseFloat((salePrice || '$0').replace('$', '')) / parseFloat((originalPrice || '$0').replace('$', ''))) * 100)}% OFF
-              </div>
             </div>
             <div style={{
               fontSize: "clamp(48px, 5vw, 72px)",
